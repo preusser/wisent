@@ -1,0 +1,103 @@
+%header{
+import  java.io.InputStream;
+import  java.io.InputStreamReader;
+import  java.io.StreamTokenizer;
+import  java.io.IOException;
+
+import  java.text.ParseException;
+}
+
+%class CalcExc extends Object {
+  StreamTokenizer  tok;
+
+ /** Inner RuntimeException to wrap checked Exceptions. */
+  private static class WrappingRuntimeException extends RuntimeException {
+    public WrappingRuntimeException(Throwable cause) { super(cause); }
+  }
+
+
+  private CalcExc(InputStream  in) {
+    tok = new StreamTokenizer(new InputStreamReader(in));
+    tok.eolIsSignificant(true);
+    tok.ordinaryChar('-');
+  }  
+
+  public static void parse(InputStream  in) throws IOException, ParseException {
+    try {
+      new CalcExc(in).parse();
+    }
+    // Unwrap the wrapped Exceptions of the expected and only possible types.
+    catch(WrappingRuntimeException e) {
+      Throwable  t = e.getCause();
+      if(t instanceof IOException   )  throw (IOException)   t;
+      if(t instanceof ParseException)  throw (ParseException)t;
+      throw  e;
+    }
+  }
+  public static void main(String[] args) {
+    try {
+      parse(System.in);
+    }
+    catch(Exception e) {
+      System.out.println(e);
+    }
+  }
+
+  private int nextToken(YYSVal val) {
+   try {
+    int  token = tok.nextToken();
+
+    switch(token) {
+    case StreamTokenizer.TT_NUMBER:
+      val.val = Math.round((float)tok.nval);
+      return  NUM;
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case '(':
+    case ')':
+      return  token;
+    case StreamTokenizer.TT_EOL:
+      return  RET;
+    case StreamTokenizer.TT_EOF:
+      return  0;
+    case StreamTokenizer.TT_WORD:
+      error("Unknown Token: " + tok.sval);
+    }
+    return  0;
+   }
+   // Wrap IOException
+   catch(IOException e) {
+     throw  new WrappingRuntimeException(e);
+   }
+  }
+  void error(String msg) {
+    // Wrap the ParseException to be thrown
+    throw  new WrappingRuntimeException(new ParseException(msg, -1));
+  }
+}
+
+%sval  int
+
+%impl{  /* Still here due to C++ history */
+}
+
+%%
+%token NUM RET
+%left '+' '-'
+%left '*' '/'
+%start eqs
+%%
+eqs	: eqs eq RET    /* List of Equations */
+    	|;
+eq	: expr { // Single Equation
+	  System.out.println("= " + $1);
+	}
+expr	: NUM           { $$ = $1; }
+	| '(' expr ')'  { $$ = $2; }
+	| expr '+' expr { $$ = $1 + $3; }
+	| expr '-' expr { $$ = $1 - $3; }
+	| expr '*' expr { $$ = $1 * $3; }
+	| expr '/' expr { $$ = $1 / $3; }
+

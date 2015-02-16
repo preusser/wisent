@@ -1,0 +1,142 @@
+%header{
+namespace wisent {
+  namespace frontend {
+    namespace wisent {
+      class WBuilder;
+    }
+  }
+}
+#include "../../Block.hpp"
+#include "WScanner.hpp"
+#include <iostream>
+}
+
+%class wisent::frontend::wisent::WParser {
+private:
+  WBuilder& bld;
+  WScanner  scanner;
+
+private:
+  WParser(WBuilder& b, std::istream& in) : bld(b), scanner(in) {}
+  ~WParser() {}
+
+public:
+  static void parse(WBuilder& bld, std::istream& in) {
+    WParser(bld, in).parse();
+  }
+
+private:
+  unsigned nextToken(YYSVal& sval);
+  void error(std::string const& msg) const;
+}
+
+%sval  Block
+
+%impl{
+#include "WParser.hpp"
+
+#include "WBuilder.hpp"
+#include "../../Terminal.hpp"
+
+#include <stdlib.h>
+
+using namespace wisent;
+using namespace wisent::frontend::wisent;
+
+unsigned WParser::nextToken(YYSVal& sval) {
+  int  tok = scanner.nextToken();
+  if(tok < 0)  error(scanner.getText());
+
+  switch(tok) {
+  case BLOCK:
+    sval.line = scanner.getMark();
+  case LIT:
+  case IDENT:
+  case KLASS:
+    sval.code = scanner.getText();
+  }
+  return  tok;
+}
+
+void WParser::error(std::string const& msg) const {
+  std::cerr << msg << " in line " << scanner.lineno() << std::endl;
+  exit(1);
+}
+
+}
+
+%%
+%token BREAK
+%token HEADER SVAL CLASS IMPL
+%token TOKEN LEFT RIGHT NONASSOC
+%token START
+%token LIT IDENT KLASS BLOCK
+
+%start gram
+%%
+gram	: opt BREAK decl BREAK spec ;
+
+/* Option Section */
+opt	: header klassd svald impl;
+header	: HEADER BLOCK      { bld.setHeaderPreamble($2); }
+klassd	: CLASS klass adjunct BLOCK { 
+	    bld.setParserClass (Klass($2.code, $3.code));
+            bld.setParserInline($4);
+          }
+svald	: SVAL sval { bld.setSValueClass(Klass($2.code)); }
+sval	: klass               { $$.code = $1.code; }
+	| sval '*'	      { $$.code = $1.code + '*'; }
+	| klass '<' svall '>' { $$.code = $1.code + "< " + $3.code + " >"; }
+svall	: svall ',' sval      { $$.code = $1.code + ", " + $3.code; }
+	| sval                { $$.code = $1.code; }
+
+klass	: KLASS { $$.code = $1.code; }
+	| IDENT { $$.code = $1.code; }
+impl	: IMPL BLOCK { bld.setParserImpl($2); }
+adjunct	: adjunct klass { $$.code = $1.code + ' ' + $2.code; } // covers IDENT and KLASS
+	| adjunct ':'   { $$.code = $1.code + " :"; }
+	| adjunct '<'   { $$.code = $1.code + " <"; }
+	| adjunct '>'   { $$.code = $1.code + " >"; }
+	| adjunct '?'   { $$.code = $1.code + '?'; }
+	| adjunct ','   { $$.code = $1.code + ','; }
+	|               { $$.code = ""; }	
+
+/* Declaration section */
+decl	: tokdecl START IDENT { bld.startSymbol($3.code); }
+
+tokdecl : tokdecl tokdef
+	|;
+
+tokdef	: assoc toklist;
+
+assoc	: TOKEN		{ bld.setAssoc(Terminal::NONE); }
+	| LEFT		{ bld.setAssoc(Terminal::LEFT); }
+	| RIGHT		{ bld.setAssoc(Terminal::RIGHT); }
+	| NONASSOC	{ bld.setAssoc(Terminal::NONE); }
+
+toklist : toklist token
+	| token;
+
+token	: LIT		{ bld.defineTerminal($1.code[0]); }
+	| IDENT		{ bld.defineTerminal($1.code); }
+
+/* Grammar section */
+spec	: spec rule
+	|;
+
+rule	: lhs ':' rhs altlist term;
+
+lhs	: IDENT     { bld.startRule($1.code); }
+
+rhs	: rhs LIT   { bld.appendRule($2.code[0]); }
+	| rhs IDENT { bld.appendRule($2.code); }
+	|;
+
+altlist	: altlist alt rhs
+	|;
+
+alt	: term '|'  {			bld.startAlternative(); }
+	| '|'       { bld.actionRule(); bld.startAlternative(); }
+term	: ';'	    { bld.actionRule();   }
+	| BLOCK	    { bld.actionRule($1); }
+	| BLOCK ';' { bld.actionRule($1); }

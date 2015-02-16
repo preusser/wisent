@@ -1,0 +1,521 @@
+Idents:
+
+   1: "BREAK"
+   2: "HEADER"
+   3: "SVAL"
+   4: "CLASS"
+   5: "IMPL"
+   6: "TOKEN"
+   7: "LEFT"
+   8: "RIGHT"
+   9: "NONASSOC"
+  10: "START"
+  11: "LIT"
+  12: "IDENT"
+  13: "KLASS"
+  14: "BLOCK"
+  15: "gram"
+  16: "opt"
+  17: "decl"
+  18: "spec"
+  19: "header"
+  20: "klassd"
+  21: "svald"
+  22: "impl"
+  23: "klass"
+  24: "adjunct"
+  25: "sval"
+  26: "svall"
+  27: "tokdecl"
+  28: "tokdef"
+  29: "assoc"
+  30: "toklist"
+  31: "token"
+  32: "rule"
+  33: "lhs"
+  34: "rhs"
+  35: "altlist"
+  36: "term"
+  37: "alt"
+Terminals:
+
+   1: [ 1, NONE] BREAK
+   2: [ 2, NONE] HEADER
+   3: [ 2, NONE] SVAL
+   4: [ 2, NONE] CLASS
+   5: [ 2, NONE] IMPL
+   6: [ 3, NONE] TOKEN
+   7: [ 3, NONE] LEFT
+   8: [ 3, NONE] RIGHT
+   9: [ 3, NONE] NONASSOC
+  10: [ 4, NONE] START
+  11: [ 5, NONE] LIT
+  12: [ 5, NONE] IDENT
+  13: [ 5, NONE] KLASS
+  14: [ 5, NONE] BLOCK
+  15: [ 0, NONE] '*'
+  16: [ 0, NONE] '<'
+  17: [ 0, NONE] '>'
+  18: [ 0, NONE] ','
+  19: [ 0, NONE] ':'
+  20: [ 0, NONE] '?'
+  21: [ 0, NONE] '|'
+  22: [ 0, NONE] ';'
+Variables:
+
+  -1: gram
+  -2: opt
+  -3: decl
+  -4: spec
+  -5: header
+  -6: klassd
+  -7: svald
+  -8: impl
+  -9: klass
+ -10: adjunct
+ -11: sval
+ -12: svall
+ -13: tokdecl
+ -14: tokdef
+ -15: assoc
+ -16: toklist
+ -17: token
+ -18: rule
+ -19: lhs
+ -20: rhs
+ -21: altlist
+ -22: term
+ -23: alt
+Rules:
+
+   0: [ 0] $        -> gram
+   1: [ 1] gram     -> opt BREAK decl BREAK spec
+   2: [ 0] opt      -> header klassd svald impl
+   3: [ 5] header   -> HEADER BLOCK
+   4: [ 5] klassd   -> CLASS klass adjunct BLOCK
+   5: [ 2] svald    -> SVAL sval
+   6: [ 0] sval     -> klass
+   7: [ 0] sval     -> sval '*'
+   8: [ 0] sval     -> klass '<' svall '>'
+   9: [ 0] svall    -> svall ',' sval
+  10: [ 0] svall    -> sval
+  11: [ 5] klass    -> KLASS
+  12: [ 5] klass    -> IDENT
+  13: [ 5] impl     -> IMPL BLOCK
+  14: [ 0] adjunct  -> adjunct klass
+  15: [ 0] adjunct  -> adjunct ':'
+  16: [ 0] adjunct  -> adjunct '<'
+  17: [ 0] adjunct  -> adjunct '>'
+  18: [ 0] adjunct  -> adjunct '?'
+  19: [ 0] adjunct  -> adjunct ','
+  20: [ 0] adjunct  ->
+  21: [ 5] decl     -> tokdecl START IDENT
+  22: [ 0] tokdecl  -> tokdecl tokdef
+  23: [ 0] tokdecl  ->
+  24: [ 0] tokdef   -> assoc toklist
+  25: [ 3] assoc    -> TOKEN
+  26: [ 3] assoc    -> LEFT
+  27: [ 3] assoc    -> RIGHT
+  28: [ 3] assoc    -> NONASSOC
+  29: [ 0] toklist  -> toklist token
+  30: [ 0] toklist  -> token
+  31: [ 5] token    -> LIT
+  32: [ 5] token    -> IDENT
+  33: [ 0] spec     -> spec rule
+  34: [ 0] spec     ->
+  35: [ 0] rule     -> lhs ':' rhs altlist term
+  36: [ 5] lhs      -> IDENT
+  37: [ 5] rhs      -> rhs LIT
+  38: [ 5] rhs      -> rhs IDENT
+  39: [ 5] rhs      ->
+  40: [ 0] altlist  -> altlist alt rhs
+  41: [ 0] altlist  ->
+  42: [ 0] alt      -> term '|'
+  43: [ 0] alt      -> '|'
+  44: [ 0] term     -> ';'
+  45: [ 5] term     -> BLOCK
+  46: [ 0] term     -> BLOCK ';'
+REACH:
+
+    EPS BREAHEADSVALCLASIMPLTOKELEFTRIGHNONASTARLIT IDENKLASBLOC'*' '<' '>' ',' ':' '?' '|' ';' alt termaltlrhs lhs ruletoketoklassotokdtokdsvalsvaladjuklasimplsvalklasheadspecdeclopt gram
+gram         X                                                                                                                                                           X           X   X  
+opt          X                                                                                                                                                           X           X      
+decl X                                                                                                                                   X                                       X          
+spec X                                                                                                                                                                       X              
+head         X                                                                                                                                                           X                  
+klas                 X                                                                                                                                               X                      
+sval             X                                                                                                                                               X                          
+impl                     X                                                                                                                                   X                              
+klas                                                 X   X                                                                                               X                                  
+adju X                                                                                                                                               X                                      
+sval                                                 X   X                                                                                       X       X                                  
+sval                                                 X   X                                                                                   X   X       X                                  
+tokd X                                                                                                                                   X                                                  
+tokd                         X   X   X   X                                                                                       X   X                                                      
+asso                         X   X   X   X                                                                                       X                                                          
+tokl                                             X   X                                                                   X   X                                                              
+toke                                             X   X                                                                   X                                                                  
+rule                                                 X                                                           X   X                                                                      
+lhs                                                  X                                                           X                                                                          
+rhs  X                                                                                                       X                                                                              
+altl X                                                                                                   X                                                                                  
+term                                                         X                               X       X                                                                                      
+alt                                                          X                           X   X   X   X                                                                                      
+FIRST:
+
+    EPS BREAHEADSVALCLASIMPLTOKELEFTRIGHNONASTARLIT IDENKLASBLOC'*' '<' '>' ',' ':' '?' '|' ';' alt termaltlrhs lhs ruletoketoklassotokdtokdsvalsvaladjuklasimplsvalklasheadspecdeclopt gram
+gram         X                                                                                                                                                           X           X      
+opt          X                                                                                                                                                           X                  
+decl                         X   X   X   X   X                                                                                   X   X   X                                                  
+spec X                                               X                                                           X   X                                                       X              
+head         X                                                                                                                                                                              
+klas                 X                                                                                                                                                                      
+sval             X                                                                                                                                                                          
+impl                     X                                                                                                                                                                  
+klas                                                 X   X                                                                                                                                  
+adju X                                               X   X           X   X   X   X   X                                                               X   X                                  
+sval                                                 X   X                                                                                       X       X                                  
+sval                                                 X   X                                                                                   X   X       X                                  
+tokd X                       X   X   X   X                                                                                       X   X   X                                                  
+tokd                         X   X   X   X                                                                                       X                                                          
+asso                         X   X   X   X                                                                                                                                                  
+tokl                                             X   X                                                                   X   X                                                              
+toke                                             X   X                                                                                                                                      
+rule                                                 X                                                           X                                                                          
+lhs                                                  X                                                                                                                                      
+rhs  X                                           X   X                                                       X                                                                              
+altl X                                                       X                           X   X   X   X   X                                                                                  
+term                                                         X                               X                                                                                              
+alt                                                          X                           X   X       X                                                                                      
+0:
+     0: [ 0] $        -> . gram; $
+on head => 1
+on opt  => 2
+on gram => 3
+on HEAD => 4
+
+1:
+     2: [ 0] opt      -> header . klassd svald impl;
+on klas => 40
+on CLAS => 41
+
+2:
+     1: [ 1] gram     -> opt . BREAK decl BREAK spec; $
+on BREA => 6
+
+3:
+     0: [ 0] $        -> gram .; $
+
+4:
+     3: [ 5] header   -> HEADER . BLOCK; CLASS
+on BLOC => 5
+
+5:
+     3: [ 5] header   -> HEADER BLOCK .; CLASS
+
+6:
+     1: [ 1] gram     -> opt BREAK . decl BREAK spec; $
+RDC:   23: [ 0] tokdecl  ->; TOKEN
+RDC:   23: [ 0] tokdecl  ->; LEFT
+RDC:   23: [ 0] tokdecl  ->; RIGHT
+RDC:   23: [ 0] tokdecl  ->; NONASSOC
+RDC:   23: [ 0] tokdecl  ->; START
+on tokd => 7
+on decl => 8
+
+7:
+    21: [ 5] decl     -> tokdecl . START IDENT;
+    22: [ 0] tokdecl  -> tokdecl . tokdef; TOKEN LEFT RIGHT NONASSOC START
+on asso => 27
+on tokd => 28
+on TOKE => 29
+on LEFT => 30
+on RIGH => 31
+on NONA => 32
+on STAR => 33
+
+8:
+     1: [ 1] gram     -> opt BREAK decl . BREAK spec; $
+on BREA => 9
+
+9:
+     1: [ 1] gram     -> opt BREAK decl BREAK . spec; $
+RDC:   34: [ 0] spec     ->; $
+RDC:   34: [ 0] spec     ->; IDENT
+on spec => 10
+
+10:
+     1: [ 1] gram     -> opt BREAK decl BREAK spec .; $
+    33: [ 0] spec     -> spec . rule; $ IDENT
+on lhs  => 11
+on rule => 12
+on IDEN => 13
+
+11:
+    35: [ 0] rule     -> lhs . ':' rhs altlist term; $ IDENT
+on ':'  => 14
+
+12:
+    33: [ 0] spec     -> spec rule .; $ IDENT
+
+13:
+    36: [ 5] lhs      -> IDENT .; ':'
+
+14:
+    35: [ 0] rule     -> lhs ':' . rhs altlist term; $ IDENT
+RDC:   39: [ 5] rhs      ->; LIT
+RDC:   39: [ 5] rhs      ->; IDENT
+RDC:   39: [ 5] rhs      ->; BLOCK
+RDC:   39: [ 5] rhs      ->; '|'
+RDC:   39: [ 5] rhs      ->; ';'
+on rhs  => 15
+
+15:
+    35: [ 0] rule     -> lhs ':' rhs . altlist term; $ IDENT
+    37: [ 5] rhs      -> rhs . LIT; LIT IDENT BLOCK '|' ';'
+    38: [ 5] rhs      -> rhs . IDENT; LIT IDENT BLOCK '|' ';'
+RDC:   41: [ 0] altlist  ->; BLOCK
+RDC:   41: [ 0] altlist  ->; '|'
+RDC:   41: [ 0] altlist  ->; ';'
+on altl => 16
+on LIT  => 17
+on IDEN => 18
+
+16:
+    35: [ 0] rule     -> lhs ':' rhs altlist . term; $ IDENT
+    40: [ 0] altlist  -> altlist . alt rhs; BLOCK '|' ';'
+on alt  => 19
+on term => 20
+on BLOC => 21
+on '|'  => 22
+on ';'  => 23
+
+17:
+    37: [ 5] rhs      -> rhs LIT .; LIT IDENT BLOCK '|' ';'
+
+18:
+    38: [ 5] rhs      -> rhs IDENT .; LIT IDENT BLOCK '|' ';'
+
+19:
+    40: [ 0] altlist  -> altlist alt . rhs; BLOCK '|' ';'
+RDC:   39: [ 5] rhs      ->; LIT
+RDC:   39: [ 5] rhs      ->; IDENT
+RDC:   39: [ 5] rhs      ->; BLOCK
+RDC:   39: [ 5] rhs      ->; '|'
+RDC:   39: [ 5] rhs      ->; ';'
+on rhs  => 26
+
+20:
+    35: [ 0] rule     -> lhs ':' rhs altlist term .; $ IDENT
+    42: [ 0] alt      -> term . '|'; LIT IDENT BLOCK '|' ';'
+on '|'  => 25
+
+21:
+    45: [ 5] term     -> BLOCK .; $ IDENT '|'
+    46: [ 0] term     -> BLOCK . ';'; $ IDENT '|'
+on ';'  => 24
+
+22:
+    43: [ 0] alt      -> '|' .; LIT IDENT BLOCK '|' ';'
+
+23:
+    44: [ 0] term     -> ';' .; $ IDENT '|'
+
+24:
+    46: [ 0] term     -> BLOCK ';' .; $ IDENT '|'
+
+25:
+    42: [ 0] alt      -> term '|' .; LIT IDENT BLOCK '|' ';'
+
+26:
+    37: [ 5] rhs      -> rhs . LIT; LIT IDENT BLOCK '|' ';'
+    38: [ 5] rhs      -> rhs . IDENT; LIT IDENT BLOCK '|' ';'
+    40: [ 0] altlist  -> altlist alt rhs .; BLOCK '|' ';'
+on LIT  => 17
+on IDEN => 18
+
+27:
+    24: [ 0] tokdef   -> assoc . toklist; TOKEN LEFT RIGHT NONASSOC START
+on toke => 35
+on tokl => 36
+on LIT  => 37
+on IDEN => 38
+
+28:
+    22: [ 0] tokdecl  -> tokdecl tokdef .; TOKEN LEFT RIGHT NONASSOC START
+
+29:
+    25: [ 3] assoc    -> TOKEN .; LIT IDENT
+
+30:
+    26: [ 3] assoc    -> LEFT .; LIT IDENT
+
+31:
+    27: [ 3] assoc    -> RIGHT .; LIT IDENT
+
+32:
+    28: [ 3] assoc    -> NONASSOC .; LIT IDENT
+
+33:
+    21: [ 5] decl     -> tokdecl START . IDENT;
+on IDEN => 34
+
+34:
+    21: [ 5] decl     -> tokdecl START IDENT .;
+
+35:
+    30: [ 0] toklist  -> token .; TOKEN LEFT RIGHT NONASSOC START LIT IDENT
+
+36:
+    24: [ 0] tokdef   -> assoc toklist .; TOKEN LEFT RIGHT NONASSOC START
+    29: [ 0] toklist  -> toklist . token; TOKEN LEFT RIGHT NONASSOC START LIT IDENT
+on toke => 39
+on LIT  => 37
+on IDEN => 38
+
+37:
+    31: [ 5] token    -> LIT .; TOKEN LEFT RIGHT NONASSOC START LIT IDENT
+
+38:
+    32: [ 5] token    -> IDENT .; TOKEN LEFT RIGHT NONASSOC START LIT IDENT
+
+39:
+    29: [ 0] toklist  -> toklist token .; TOKEN LEFT RIGHT NONASSOC START LIT IDENT
+
+40:
+     2: [ 0] opt      -> header klassd . svald impl;
+on sval => 53
+on SVAL => 54
+
+41:
+     4: [ 5] klassd   -> CLASS . klass adjunct BLOCK; SVAL
+on klas => 42
+on IDEN => 43
+on KLAS => 44
+
+42:
+     4: [ 5] klassd   -> CLASS klass . adjunct BLOCK; SVAL
+RDC:   20: [ 0] adjunct  ->; IDENT
+RDC:   20: [ 0] adjunct  ->; KLASS
+RDC:   20: [ 0] adjunct  ->; BLOCK
+RDC:   20: [ 0] adjunct  ->; '<'
+RDC:   20: [ 0] adjunct  ->; '>'
+RDC:   20: [ 0] adjunct  ->; ','
+RDC:   20: [ 0] adjunct  ->; ':'
+RDC:   20: [ 0] adjunct  ->; '?'
+on adju => 45
+
+43:
+    12: [ 5] klass    -> IDENT .; IMPL IDENT KLASS BLOCK '*' '<' '>' ',' ':' '?'
+
+44:
+    11: [ 5] klass    -> KLASS .; IMPL IDENT KLASS BLOCK '*' '<' '>' ',' ':' '?'
+
+45:
+     4: [ 5] klassd   -> CLASS klass adjunct . BLOCK; SVAL
+    14: [ 0] adjunct  -> adjunct . klass; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+    15: [ 0] adjunct  -> adjunct . ':'; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+    16: [ 0] adjunct  -> adjunct . '<'; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+    17: [ 0] adjunct  -> adjunct . '>'; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+    18: [ 0] adjunct  -> adjunct . '?'; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+    19: [ 0] adjunct  -> adjunct . ','; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+on klas => 46
+on IDEN => 43
+on KLAS => 44
+on BLOC => 47
+on '<'  => 48
+on '>'  => 49
+on ','  => 50
+on ':'  => 51
+on '?'  => 52
+
+46:
+    14: [ 0] adjunct  -> adjunct klass .; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+
+47:
+     4: [ 5] klassd   -> CLASS klass adjunct BLOCK .; SVAL
+
+48:
+    16: [ 0] adjunct  -> adjunct '<' .; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+
+49:
+    17: [ 0] adjunct  -> adjunct '>' .; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+
+50:
+    19: [ 0] adjunct  -> adjunct ',' .; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+
+51:
+    15: [ 0] adjunct  -> adjunct ':' .; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+
+52:
+    18: [ 0] adjunct  -> adjunct '?' .; IDENT KLASS BLOCK '<' '>' ',' ':' '?'
+
+53:
+     2: [ 0] opt      -> header klassd svald . impl;
+on impl => 64
+on IMPL => 65
+
+54:
+     5: [ 2] svald    -> SVAL . sval; IMPL
+on sval => 55
+on klas => 56
+on IDEN => 43
+on KLAS => 44
+
+55:
+     5: [ 2] svald    -> SVAL sval .; IMPL
+     7: [ 0] sval     -> sval . '*'; IMPL '*'
+on '*'  => 60
+
+56:
+     6: [ 0] sval     -> klass .; IMPL '*' '>' ','
+     8: [ 0] sval     -> klass . '<' svall '>'; IMPL '*' '>' ','
+on '<'  => 57
+
+57:
+     8: [ 0] sval     -> klass '<' . svall '>'; IMPL '*' '>' ','
+on sval => 58
+on sval => 59
+on klas => 56
+on IDEN => 43
+on KLAS => 44
+
+58:
+     8: [ 0] sval     -> klass '<' svall . '>'; IMPL '*' '>' ','
+     9: [ 0] svall    -> svall . ',' sval; '>' ','
+on '>'  => 61
+on ','  => 62
+
+59:
+     7: [ 0] sval     -> sval . '*'; '*' '>' ','
+    10: [ 0] svall    -> sval .; '>' ','
+on '*'  => 60
+
+60:
+     7: [ 0] sval     -> sval '*' .; IMPL '*' '>' ','
+
+61:
+     8: [ 0] sval     -> klass '<' svall '>' .; IMPL '*' '>' ','
+
+62:
+     9: [ 0] svall    -> svall ',' . sval; '>' ','
+on sval => 63
+on klas => 56
+on IDEN => 43
+on KLAS => 44
+
+63:
+     7: [ 0] sval     -> sval . '*'; '*' '>' ','
+     9: [ 0] svall    -> svall ',' sval .; '>' ','
+on '*'  => 60
+
+64:
+     2: [ 0] opt      -> header klassd svald impl .;
+
+65:
+    13: [ 5] impl     -> IMPL . BLOCK;
+on BLOC => 66
+
+66:
+    13: [ 5] impl     -> IMPL BLOCK .;
+

@@ -1,0 +1,17 @@
+# Implements a simple interactive command-line calculator.
+#
+# Also see the similar CalcExc example demonstrating the handling of
+# checked Exceptions that may occur during parse().
+
+# Compile wisent
+make -C ..
+
+# Run wisent on parser specification
+../wisent -bjava Calc
+#../wisent -bjava:gen Calc   # for Java1.5 and higher using generics
+
+# Compile generated parser
+javac Calc.java
+
+# Test it
+java Calc

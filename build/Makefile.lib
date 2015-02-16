@@ -1,0 +1,21 @@
+# Compile Registrar and Library
+.PHONY: all
+all:: lib$(library).a $(registrar:.cpp=.o)
+
+lib$(library).a: $(sources:.cpp=.o)
+	ar crs $@ $?
+
+# Load Dependencies
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),clobber)
+-include $(registrar:.cpp=.dep) $(sources:.cpp=.dep)
+endif
+endif
+
+%.dep: %.cpp
+	@$(CC) -MM -MT '$*.o $@' $< > $@
+
+# Clean Up
+clobber:: clean
+clean::
+	rm -f *.o *.dep lib$(library).a

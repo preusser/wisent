@@ -1,0 +1,23 @@
+The wisent LALR(1) Parser Generator
+===================================
+A Parser Generator for C++ and Java implemented in C++.
+
+Home:     http://wisent.sourceforge.net/
+
+Platform: - independent (source)
+          - GNU make, POSIX shell (distributed build scripts)
+
+License: GNU General Public License (GPL):
+	  - GPL.txt
+          - http://www.gnu.org/licenses/gpl.html
+
+QUICK-START:
+------------
+1. Unpack source .tar-ball:         tar -xzf wisent-XX.tgz
+2. Change into directory 'wisent':  cd wisent
+3. Build the parser generator:      make wisent
+4. Test the distributed Java example (see also examples/Calc.howto):
+    a) cd examples
+    b) ../wisent -bjava Calc
+    c) javac Calc.java
+    d) java Calc

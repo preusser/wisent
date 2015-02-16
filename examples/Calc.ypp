@@ -1,0 +1,77 @@
+%header{
+import  java.io.InputStream;
+import  java.io.InputStreamReader;
+import  java.io.StreamTokenizer;
+}
+
+%class Calc extends Object {
+  StreamTokenizer  tok;
+
+  private Calc(InputStream  in) {
+    tok = new StreamTokenizer(new InputStreamReader(in));
+    tok.eolIsSignificant(true);
+    tok.ordinaryChar('-');
+  }  
+
+  public static void main(String[] args) {
+    Calc  calc = new Calc(System.in);
+    calc.parse();
+  }
+
+  private int nextToken(YYSVal val) {
+   try {
+    int  token = tok.nextToken();
+
+    switch(token) {
+    case StreamTokenizer.TT_NUMBER:
+      val.val = Math.round((float)tok.nval);
+      return  NUM;
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case '(':
+    case ')':
+      return  token;
+    case StreamTokenizer.TT_EOL:
+      return  RET;
+    case StreamTokenizer.TT_EOF:
+      return  0;
+    case StreamTokenizer.TT_WORD:
+      error("Unknown Token: " + tok.sval);
+    }
+   }
+   catch(java.io.IOException e) {
+     error(e.toString());
+   }
+   return  0;
+  }
+  void error(String msg) {
+    System.err.println(msg);
+    System.exit(1);
+  }
+}
+
+%sval  int
+
+%impl{  /* Still here due to C++ history */
+}
+
+%%
+%token NUM RET
+%left '+' '-'
+%left '*' '/'
+%start eqs
+%%
+eqs	: eqs eq RET    /* List of Equations */
+    	|;
+eq	: expr { // Single Equation
+	  System.out.println("= " + $1);
+	}
+expr	: NUM           { $$ = $1; }
+	| '(' expr ')'  { $$ = $2; }
+	| expr '+' expr { $$ = $1 + $3; }
+	| expr '-' expr { $$ = $1 - $3; }
+	| expr '*' expr { $$ = $1 * $3; }
+	| expr '/' expr { $$ = $1 / $3; }
+

@@ -1,0 +1,10 @@
+# Set Compiler Flags
+ifdef debug
+  CXXFLAGS ?= -Wall -Wno-non-virtual-dtor -ggdb
+else
+  CXXFLAGS ?= -Wall -Wno-non-virtual-dtor -O3
+endif
+
+MAKEFLAGS += --no-print-directory
+VPATH := $(subst /build,/src,$(CURDIR))
+CXXFLAGS += -I$(VPATH)

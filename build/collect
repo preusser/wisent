@@ -1,0 +1,18 @@
+#!/bin/bash
+target=$1
+
+function extract() {
+  sed -ne"s/^ *$1 *:\\?= *//;tb;b;:b;s/\\\\\\+\$//;p;tc;b;:c;n;bb" $2
+}
+
+regs=
+libs=
+for i in $target/*/Makefile; do
+  path=$(dirname $i)
+  regs="$regs \$(patsubst %.cpp, $path/%.o, $(extract registrar $i))"
+  libs="$libs \$(patsubst %, $path/lib%.a, $(extract library $i))"
+done
+
+exec >"$1/Makefile.conf"
+echo "$1_regs :=$regs"
+echo "$1_libs :=$libs"

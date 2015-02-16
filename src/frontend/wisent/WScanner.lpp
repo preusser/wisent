@@ -1,0 +1,129 @@
+%option c++ noyywrap warn 8bit debug noyylineno
+%option outfile="WScanner.cpp"
+%option yyclass="wisent::WScanner"
+
+space   [ \t\r]+
+num     [0-9]
+oct	[0-7]
+hex     [0-9A-Fa-f]
+alpha   [A-Za-z_]
+alnum   ({alpha}|{num})
+ident   {alpha}{alnum}*
+number  {num}+
+klass	({ident}(::|\.))*{ident}
+
+%{
+#define  _SKIP_YYFLEXLEXER_
+#include "WScanner.hpp"
+#include "WParser.hpp"
+
+#include <sstream>
+
+using namespace wisent;
+using wisent::frontend::wisent::WParser;
+
+#undef  YY_DECL
+#define YY_DECL int WScanner::nextToken()
+%}
+
+%x BLCK BLSTR BLCHR COMMENT NLCOMMENT
+%%
+\%%		return  WParser::BREAK;
+
+\%header	return  WParser::HEADER;
+\%sval		return  WParser::SVAL;
+\%class		return  WParser::CLASS;
+\%impl		return  WParser::IMPL;
+
+\%token		return  WParser::TOKEN;
+\%left		return  WParser::LEFT;
+\%right		return  WParser::RIGHT;
+\%nonassoc	return  WParser::NONASSOC;
+\%start		return  WParser::START;
+
+\{ {
+  BEGIN(BLCK);
+  mark = line;
+  text = "";
+}
+<BLCK>[^{"'}\n]*	text.append(yytext, 0, yyleng);
+<BLCK>\n		text += '\n'; line++;
+<BLCK>\{		text += '{'; depth++;
+<BLCK>\} {
+  if(depth == 0) {
+    BEGIN(INITIAL);
+    return  WParser::BLOCK;
+  }
+  else {
+    text += '}';
+    depth--;
+  }
+}
+<BLCK>\"		BEGIN(BLSTR);  text += '"';
+<BLSTR>[^"\n\\]		text.append(yytext, 0, yyleng);
+<BLSTR>\n		text += '\n'; line++;
+<BLSTR>\\\"		text += "\\\"";
+<BLSTR>\\		text += '\\'; line++;
+<BLSTR>\"		BEGIN(BLCK);  text += '"';
+<BLCK>\'		BEGIN(BLCHR); text += '\'';
+<BLCHR>[^'\n\\]		text.append(yytext, 0, yyleng);
+<BLCHR>\n		text += '\n'; line++;
+<BLCHR>\\\'		text += "\\\'";
+<BLCHR>\\		text += '\\'; line++;
+<BLCHR>\'		BEGIN(BLCK);  text += '\''; 
+
+\/\*		BEGIN(COMMENT);
+<COMMENT>\/\*	depth++;
+<COMMENT>[^*\n]*	;
+<COMMENT>\n	line++;
+<COMMENT>\*\/	if(depth == 0)  BEGIN(INITIAL); else  depth--;
+<COMMENT>\*	;
+
+\/\/		BEGIN(NLCOMMENT);
+<NLCOMMENT>.*	;
+<NLCOMMENT>\n	BEGIN(INITIAL); line++;
+
+{space}   	;
+\n		line++;
+
+{ident} {
+  text = std::string(yytext, yyleng);
+  return  WParser::IDENT;
+}
+{klass}		text = std::string(yytext, yyleng);  return  WParser::KLASS;
+[,:;<|>*]	return *yytext;
+'.'		text = std::string(yytext+1, 1);  return  WParser::LIT;
+'\\0'		text = "\0";  return  WParser::LIT;
+'\\?'		text = "?";   return  WParser::LIT;
+'\\''		text = "'";   return  WParser::LIT;
+'\\\"'		text = "\"";  return  WParser::LIT;
+'\\\\'		text = "\\";  return  WParser::LIT;
+'\\a'		text = "\a";  return  WParser::LIT;
+'\\b'		text = "\b";  return  WParser::LIT;
+'\\f'		text = "\f";  return  WParser::LIT;
+'\\n'		text = "\n";  return  WParser::LIT;
+'\\r'		text = "\r";  return  WParser::LIT;
+'\\t'		text = "\t";  return  WParser::LIT;
+'\\v'		text = "\v";  return  WParser::LIT;
+'\\'{oct}+ {
+  memmove(yytext, yytext+1, yyleng-1);
+  yytext[yyleng] = '\0';
+  text.resize(1, ' ');
+  text[0] = strtol(yytext, 0,  8);
+}
+
+'\\x'{hex}+ {
+  memmove(yytext, yytext+2, yyleng-2);
+  yytext[yyleng-1] = '\0';
+  text.resize(1, ' ');
+  text[0] = strtol(yytext, 0, 16);
+}
+
+. {
+  text = std::string("Unexpected character '") + *yytext + "'";
+  return -1;
+}
+
+%%
+WScanner::WScanner(std::istream& in) : yyFlexLexer(&in), line(1), depth(0) {}
+WScanner::~WScanner() {}
