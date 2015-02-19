@@ -234,8 +234,7 @@ void CPPBackend::buildImpl(Grammar const& grm) const {
     for(unsigned i = ex-1; i > 0; res[i--] = ex);
     res[0] = 0; // End-of-Input
 
-    cpp << "#ifdef TRACE\n"
-           "char const *const  " << scope << "yyterms[] = { \"EOF\", \n";
+    cpp << "char const *const  " << scope << "yyterms[] = { \"EOF\", \n";
     for(TermPool::Iterator  it = terms.iterator(); it.hasNext();) {
       Terminal const  term = it.next();
 
@@ -246,8 +245,7 @@ void CPPBackend::buildImpl(Grammar const& grm) const {
       // Mapping: external -> internal
       res[term.external()] = term.internal();
     }
-    cpp << "};\n"
-           "#endif\n\n";
+    cpp << "};\n";
 
     // Print mapping
     cpp << "unsigned short const  " << scope << "yyintern[] = {\n";
@@ -363,7 +361,15 @@ void CPPBackend::buildImpl(Grammar const& grm) const {
 	"      yystack.print();\n"
       */
       "      signed short const  yyact = yyaction[*yystack][yytok];\n"
-      "      if(yyact == 0)  error(\"Syntax Error\");\n"
+      "      if(yyact == 0) {\n"
+      "        std::string                yymsg(\"Syntax Error, expecting one of: \");\n"
+      "        signed short const *const  yyrow = yyaction[*yystack];\n"
+      "        for(unsigned  i = 0; i < YYINTERN; i++) {\n"
+      "          if(yyrow[i])  yymsg.append(yyterms[i]).append(\", \");\n"
+      "        }\n"
+      "        error(yymsg.erase(yymsg.length()-2));\n"
+      "        return;\n"
+      "      }\n"
       "      if(yyact >  1) { // shift\n"
       "#ifdef TRACE\n"
       "        std::cerr << \"Push \" << yyterms[yytok] << std::endl;\n"
