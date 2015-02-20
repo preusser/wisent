@@ -330,10 +330,8 @@ void CPPBackend::buildImpl(Grammar const& grm) const {
       cpp << " },\n";
     }
     cpp << "};\n\n";
-  }
 
-  // Generate parse() method
-  {
+    // Generate parse() method
     ActionPool const& acts = grm.getActions();
     size_t     const  size = acts.size();
 
@@ -362,12 +360,13 @@ void CPPBackend::buildImpl(Grammar const& grm) const {
       */
       "      signed short const  yyact = yyaction[*yystack][yytok];\n"
       "      if(yyact == 0) {\n"
-      "        std::string                yymsg(\"Syntax Error, expecting one of: \");\n"
+      "        std::string                yymsg(\"Expecting (\");\n"
       "        signed short const *const  yyrow = yyaction[*yystack];\n"
-      "        for(unsigned  i = 0; i < YYINTERN; i++) {\n"
-      "          if(yyrow[i])  yymsg.append(yyterms[i]).append(\", \");\n"
+      "        for(unsigned  i = 0; i < " << acols << "; i++) {\n"
+      "          if(yyrow[i])  yymsg.append(yyterms[i]) += '|';\n"
       "        }\n"
-      "        error(yymsg.erase(yymsg.length()-2));\n"
+      "        *yymsg.rbegin() = ')';\n"
+      "        error(yymsg.append(\" instead of \").append(yyterms[yytok]));\n"
       "        return;\n"
       "      }\n"
       "      if(yyact >  1) { // shift\n"
