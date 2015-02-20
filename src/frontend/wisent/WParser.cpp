@@ -68,13 +68,10 @@ public:
   unsigned short operator*() const { return  stack.back().state; }
 };
 
-#ifdef TRACE
 char const *const  wisent::frontend::wisent::WParser::yyterms[] = { "EOF", 
 "BREAK", "HEADER", "SVAL", "CLASS", "IMPL", "TOKEN", "LEFT", "RIGHT",
 "NONASSOC", "START", "LIT", "IDENT", "KLASS", "BLOCK", "'*'", "'<'",
 "'>'", "','", "':'", "'?'", "'|'", "';'", };
-#endif
-
 unsigned short const  wisent::frontend::wisent::WParser::yyintern[] = {
      0,    270,    270,    270,    270,    270,    270,    270,
    270,    270,    270,    270,    270,    270,    270,    270,
@@ -336,7 +333,16 @@ void wisent::frontend::wisent::WParser::parse() {
     // Reduce until shift
     while(true) {
       signed short const  yyact = yyaction[*yystack][yytok];
-      if(yyact == 0)  error("Syntax Error");
+      if(yyact == 0) {
+        std::string                yymsg("Expecting (");
+        signed short const *const  yyrow = yyaction[*yystack];
+        for(unsigned  i = 0; i < 23; i++) {
+          if(yyrow[i])  yymsg.append(yyterms[i]) += '|';
+        }
+        *yymsg.rbegin() = ')';
+        error(yymsg.append(" instead of ").append(yyterms[yytok]));
+        return;
+      }
       if(yyact >  1) { // shift
 #ifdef TRACE
         std::cerr << "Push " << yyterms[yytok] << std::endl;
@@ -358,7 +364,7 @@ void wisent::frontend::wisent::WParser::parse() {
 case 3: {
 #line 81 "WP.ypp"
  bld.setHeaderPreamble(yystack[yylen - 2]); 
-#line 361 "WP.cpp"
+#line 367 "WP.cpp"
 break;
 }
 case 4: {
@@ -367,193 +373,193 @@ case 4: {
 	    bld.setParserClass (Klass(yystack[yylen - 2].code, yystack[yylen - 3].code));
             bld.setParserInline(yystack[yylen - 4]);
           
-#line 370 "WP.cpp"
+#line 376 "WP.cpp"
 break;
 }
 case 5: {
 #line 86 "WP.ypp"
  bld.setSValueClass(Klass(yystack[yylen - 2].code)); 
-#line 376 "WP.cpp"
+#line 382 "WP.cpp"
 break;
 }
 case 6: {
 #line 87 "WP.ypp"
  yylval.code = yystack[yylen - 1].code; 
-#line 382 "WP.cpp"
+#line 388 "WP.cpp"
 break;
 }
 case 7: {
 #line 88 "WP.ypp"
  yylval.code = yystack[yylen - 1].code + '*'; 
-#line 388 "WP.cpp"
+#line 394 "WP.cpp"
 break;
 }
 case 8: {
 #line 89 "WP.ypp"
  yylval.code = yystack[yylen - 1].code + "< " + yystack[yylen - 3].code + " >"; 
-#line 394 "WP.cpp"
+#line 400 "WP.cpp"
 break;
 }
 case 9: {
 #line 90 "WP.ypp"
  yylval.code = yystack[yylen - 1].code + ", " + yystack[yylen - 3].code; 
-#line 400 "WP.cpp"
+#line 406 "WP.cpp"
 break;
 }
 case 10: {
 #line 91 "WP.ypp"
  yylval.code = yystack[yylen - 1].code; 
-#line 406 "WP.cpp"
+#line 412 "WP.cpp"
 break;
 }
 case 11: {
 #line 93 "WP.ypp"
  yylval.code = yystack[yylen - 1].code; 
-#line 412 "WP.cpp"
+#line 418 "WP.cpp"
 break;
 }
 case 12: {
 #line 94 "WP.ypp"
  yylval.code = yystack[yylen - 1].code; 
-#line 418 "WP.cpp"
+#line 424 "WP.cpp"
 break;
 }
 case 13: {
 #line 95 "WP.ypp"
  bld.setParserImpl(yystack[yylen - 2]); 
-#line 424 "WP.cpp"
+#line 430 "WP.cpp"
 break;
 }
 case 14: {
 #line 96 "WP.ypp"
  yylval.code = yystack[yylen - 1].code + ' ' + yystack[yylen - 2].code; 
-#line 430 "WP.cpp"
+#line 436 "WP.cpp"
 break;
 }
 case 15: {
 #line 97 "WP.ypp"
  yylval.code = yystack[yylen - 1].code + " :"; 
-#line 436 "WP.cpp"
+#line 442 "WP.cpp"
 break;
 }
 case 16: {
 #line 98 "WP.ypp"
  yylval.code = yystack[yylen - 1].code + " <"; 
-#line 442 "WP.cpp"
+#line 448 "WP.cpp"
 break;
 }
 case 17: {
 #line 99 "WP.ypp"
  yylval.code = yystack[yylen - 1].code + " >"; 
-#line 448 "WP.cpp"
+#line 454 "WP.cpp"
 break;
 }
 case 18: {
 #line 100 "WP.ypp"
  yylval.code = yystack[yylen - 1].code + '?'; 
-#line 454 "WP.cpp"
+#line 460 "WP.cpp"
 break;
 }
 case 19: {
 #line 101 "WP.ypp"
  yylval.code = yystack[yylen - 1].code + ','; 
-#line 460 "WP.cpp"
+#line 466 "WP.cpp"
 break;
 }
 case 20: {
 #line 102 "WP.ypp"
  yylval.code = ""; 
-#line 466 "WP.cpp"
+#line 472 "WP.cpp"
 break;
 }
 case 21: {
 #line 105 "WP.ypp"
  bld.startSymbol(yystack[yylen - 3].code); 
-#line 472 "WP.cpp"
+#line 478 "WP.cpp"
 break;
 }
 case 25: {
 #line 112 "WP.ypp"
  bld.setAssoc(Terminal::NONE); 
-#line 478 "WP.cpp"
+#line 484 "WP.cpp"
 break;
 }
 case 26: {
 #line 113 "WP.ypp"
  bld.setAssoc(Terminal::LEFT); 
-#line 484 "WP.cpp"
+#line 490 "WP.cpp"
 break;
 }
 case 27: {
 #line 114 "WP.ypp"
  bld.setAssoc(Terminal::RIGHT); 
-#line 490 "WP.cpp"
+#line 496 "WP.cpp"
 break;
 }
 case 28: {
 #line 115 "WP.ypp"
  bld.setAssoc(Terminal::NONE); 
-#line 496 "WP.cpp"
+#line 502 "WP.cpp"
 break;
 }
 case 31: {
 #line 120 "WP.ypp"
  bld.defineTerminal(yystack[yylen - 1].code[0]); 
-#line 502 "WP.cpp"
+#line 508 "WP.cpp"
 break;
 }
 case 32: {
 #line 121 "WP.ypp"
  bld.defineTerminal(yystack[yylen - 1].code); 
-#line 508 "WP.cpp"
+#line 514 "WP.cpp"
 break;
 }
 case 36: {
 #line 129 "WP.ypp"
  bld.startRule(yystack[yylen - 1].code); 
-#line 514 "WP.cpp"
+#line 520 "WP.cpp"
 break;
 }
 case 37: {
 #line 131 "WP.ypp"
  bld.appendRule(yystack[yylen - 2].code[0]); 
-#line 520 "WP.cpp"
+#line 526 "WP.cpp"
 break;
 }
 case 38: {
 #line 132 "WP.ypp"
  bld.appendRule(yystack[yylen - 2].code); 
-#line 526 "WP.cpp"
+#line 532 "WP.cpp"
 break;
 }
 case 42: {
 #line 138 "WP.ypp"
 			bld.startAlternative(); 
-#line 532 "WP.cpp"
+#line 538 "WP.cpp"
 break;
 }
 case 43: {
 #line 139 "WP.ypp"
  bld.actionRule(); bld.startAlternative(); 
-#line 538 "WP.cpp"
+#line 544 "WP.cpp"
 break;
 }
 case 44: {
 #line 140 "WP.ypp"
  bld.actionRule();   
-#line 544 "WP.cpp"
+#line 550 "WP.cpp"
 break;
 }
 case 45: {
 #line 141 "WP.ypp"
  bld.actionRule(yystack[yylen - 1]); 
-#line 550 "WP.cpp"
+#line 556 "WP.cpp"
 break;
 }
 case 46: {
 #line 142 "WP.ypp"
  bld.actionRule(yystack[yylen - 1]); 
-#line 556 "WP.cpp"
+#line 562 "WP.cpp"
 break;
 }
         }

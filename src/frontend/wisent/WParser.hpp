@@ -41,6 +41,7 @@ private:
   void error(std::string const& msg) const;
 
 #line 43 "WP.hpp"
+private:
   void parse();
 public:
 enum {
