@@ -53,7 +53,6 @@ int analyze_spec(char const*& name, Properties& props, char *spec) {
 
 int main(int const  argc, char *const  argv[]) {
   std::ofstream   log; // log stream to be opened
-  std::streambuf *clg; // original clog streambuf
 
   char const *fname = "wisent";
   char const *bname = "cpp";
@@ -145,15 +144,17 @@ int main(int const  argc, char *const  argv[]) {
       return  1;
     }
 
-    clg = std::clog.rdbuf(log.rdbuf());
-
+    class LR {
+      std::streambuf *const  clg; // original clog streambuf
+    public:
+      LR(std::streambuf *log) : clg(std::clog.rdbuf(log)) {}
+      ~LR() { std::clog.rdbuf(clg); }
+    }  lr(log.rdbuf());
     Grammar  grm(*frnt);
     grm.echo   (std::clog);
     grm.warn   (std::cerr);
     grm.analyze(std::clog);
     back->accept(grm);      
-
-    std::clog.rdbuf(clg);
   }
   catch(Exception& e) {
     e.dump(std::cerr);
