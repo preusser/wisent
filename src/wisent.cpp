@@ -1,6 +1,6 @@
 /***
  * wisent - LALR(1) Parser Generator
- * Copyright (C) 2004,2005 Thomas B. Preuﬂer <preusser@ite.inf.tu-dresden.de>
+ * Copyright (C) 2004-2015 Thomas B. Preu√üer <thomas.preusser@utexas.edu>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,6 +57,7 @@ int main(int const  argc, char *const  argv[]) {
 
   char const *fname = "wisent";
   char const *bname = "cpp";
+  std::string  gname;
   Properties  _props;
   Properties  fprops(&_props);
   Properties  bprops(&_props);
@@ -110,11 +111,18 @@ int main(int const  argc, char *const  argv[]) {
       }
       else {
 	if(idx+1 == argc) {
-	  _props.setProperty("NAME", arg);
-	  log.open((std::string(arg)+".log").c_str());
+	  gname = arg; {
+	    // Normalize grammar name
+	    size_t const  l = gname.length();
+	    if((l >= 4) && (gname.compare(l-4, 4, ".ypp") == 0)) {
+	      gname = gname.substr(0, l-4);
+	    }
+	  }
+	  _props.setProperty("NAME", gname.c_str());
+	  log.open((gname + ".log").c_str());
 	  break;
 	}
-	std::cerr << "Extra arguments beyond grammar specification \""
+	std::cerr << "Extra argument beyond grammar specification \""
 		  << arg << "\".\n" << std::endl;
 	return  1;
       }
