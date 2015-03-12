@@ -73,8 +73,21 @@ MarkStream& operator<<(MarkStream& o, Block const& block) {
 }
 
 //+ Construction / Destruction +++++++++++++++++++++++++++++++++++++++++++++++
+namespace {
+  char const *const  OFFS[] = { "no", "off", "none", "false", "0" };
+  bool is_off(Properties const& props, char const *const  name) {
+    char const *const  val = props.findProperty(name);
+    if(val != 0) {
+      for(unsigned  i = 0; i < sizeof(OFFS)/sizeof(*OFFS); i++) {
+	if(strcasecmp(val, OFFS[i]) == 0)  return  true;
+      }
+    }
+    return  false;
+  }
+}
+
 CPPBackend::CPPBackend(Properties const& props)
-  : name(props.getProperty("NAME")) {}
+  : name(props.getProperty("NAME")), lineinfo(!is_off(props, "lineinfo")) {}
 CPPBackend::~CPPBackend() {}
 
 //+ Output Generation ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -84,7 +97,7 @@ void CPPBackend::accept(Grammar const& grm) {
 }
 
 void CPPBackend::buildHeader(Grammar const& grm) const {
-  MarkStream  hpp(name + ".hpp");
+  MarkStream  hpp(name + ".hpp", lineinfo);
 
   Klass    const& parser = grm.getParserClass();
   unsigned const  depth  = parser.cntSpaces();
@@ -172,7 +185,7 @@ void CPPBackend::buildHeader(Grammar const& grm) const {
 }
 
 void CPPBackend::buildImpl(Grammar const& grm) const {
-  MarkStream  cpp(name + ".cpp");
+  MarkStream  cpp(name + ".cpp", lineinfo);
 
   Klass       const& parser = grm.getParserClass();
   std::string const  scope  = parser.toString("::") + "::";

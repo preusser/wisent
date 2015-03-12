@@ -20,4 +20,4 @@ using namespace wisent::backend::cpp;
 
 //+ Backend Registration +++++++++++++++++++++++++++++++++++++++++++++++++++++
 ImplementationPool<Backend>::Entry<CPPBackend>
-CPPBackend::registrar("cpp", "C++ Backend");
+CPPBackend::registrar("cpp", "C++ Backend [lineinfo=no - disable #line directives]");

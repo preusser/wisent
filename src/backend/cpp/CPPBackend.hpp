@@ -28,6 +28,7 @@ namespace wisent {
     namespace cpp {
       class CPPBackend : public Backend {
 	std::string const  name;
+	bool        const  lineinfo;
 
       public:
 	CPPBackend(Properties const& props);

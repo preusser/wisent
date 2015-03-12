@@ -64,10 +64,10 @@ int LineCountBuf::sync() {
 //+ Construction / Destruction +++++++++++++++++++++++++++++++++++++++++++++++
 MarkStream::MarkStream()
  : std::basic_ostream<char, std::char_traits<char> >(new LineCountBuf()), 
-   out(static_cast<LineCountBuf*>(rdbuf())) {}
-MarkStream::MarkStream(std::string const& _file)
+   out(static_cast<LineCountBuf*>(rdbuf())), lineinfo(true) {}
+MarkStream::MarkStream(std::string const& _file, bool _lineinfo)
  : std::basic_ostream<char, std::char_traits<char> >(new LineCountBuf()), 
-   out(static_cast<LineCountBuf*>(rdbuf())) {
+   out(static_cast<LineCountBuf*>(rdbuf())), lineinfo(_lineinfo) {
   open(_file);
 }
 MarkStream::~MarkStream() {
@@ -80,9 +80,9 @@ void MarkStream::open(std::string const& _file) {
 }
 
 void MarkStream::mark() {
-  *this << "#line " << out->line() << " \"" << file << "\"\n";
+  if(lineinfo) *this << "#line " << out->line() << " \"" << file << "\"\n";
 }
 
 void MarkStream::mark(std::string const& file, unsigned line) {
-  *this << "#line " << line << " \"" << file << "\"\n";
+  if(lineinfo) *this << "#line " << line << " \"" << file << "\"\n";
 }

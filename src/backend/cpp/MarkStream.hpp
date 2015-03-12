@@ -55,12 +55,13 @@ namespace wisent {
        * in the output file.
        */
       class MarkStream : public std::ostream {
-	LineCountBuf *out;
-	std::string   file;
+	LineCountBuf *const  out;
+	std::string          file;
+	bool          const  lineinfo;
 	
       public:
 	MarkStream();
-	MarkStream(std::string const& file);
+	MarkStream(std::string const& file, bool  lineinfo);
 	~MarkStream();
 	
       public:
