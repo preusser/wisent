@@ -22,3 +22,8 @@ a Java backend. The tool itself is implemented in C++.
     + `../wisent -bjava Calc`
     + `javac Calc.java`
     + `java Calc`
+
+## Documentation
+
+Please, refer to the technical report
+[TUD-FI04-11](http://www.qucosa.de/fileadmin/data/qucosa/documents/9868/tud_TB_2004-11.pdf).
