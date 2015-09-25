@@ -27,3 +27,14 @@ a Java backend. The tool itself is implemented in C++.
 
 Please, refer to the technical report
 [TUD-FI04-11](http://www.qucosa.de/fileadmin/data/qucosa/documents/9868/tud_TB_2004-11.pdf).
+
+## References
+
+Besides the [shipped examples](examples/), the parser for the wisent grammar itself in
+implemented by a [wisent grammar](src/frontend/wisent/WP.ypp). Other use examples can
+be found in the following projects:
+
+Project | Grammar
+--------|--------
+[Q2D](https://github.com/fer-rum/q2d) | [Boolean Expression Parser](https://github.com/fer-rum/q2d/blob/master/interfaces/quantor/Quantorizer.ypp)
+[Q27](https://github.com/preusser/q27)| [Range Specification Parser](https://github.com/preusser/q27/blob/master/src/cpp/range/RangeParser.ypp)
