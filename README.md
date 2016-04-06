@@ -41,3 +41,4 @@ Project | Grammar
 --------|--------
 [Q2D](https://github.com/fer-rum/q2d) | [Boolean Expression Parser](https://github.com/fer-rum/q2d/blob/master/interfaces/quantor/Quantorizer.ypp)
 [Q27](https://github.com/preusser/q27)| [Range Specification Parser](https://github.com/preusser/q27/blob/master/src/cpp/range/RangeParser.ypp)
+[QBM](https://github.com/preusser/qbm)| [QDL Circuit Description Parser](https://github.com/preusser/qbm/blob/master/src/qdl/QdlParser.ypp)
